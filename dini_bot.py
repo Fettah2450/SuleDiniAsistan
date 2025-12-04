@@ -6,22 +6,27 @@ from google import genai
 from google.genai.errors import APIError 
 
 # ----------------------------------------------------------------------
-# 1. API ANAHTARLARI VE AYARLAR
+# 1. API ANAHTARLARI VE AYARLAR (Senin İsteğin Üzerine Kod İçine Yazılmıştır)
 # ----------------------------------------------------------------------
 
-# Lütfen bu alanları kendi doğru anahtarlarınızla doldurun.
-TELEGRAM_BOT_TOKEN = "8044876827:AAHGWWTEqaVL79HLXnf_W-nJLwmtSYslaPs"
-GEMINI_API_KEY = "AIzaSyAmidYtGrfHh5k1qxlZkAoQM0a-x59F0Ng" 
+# Senin Telegram Bot Token'ın:
+TELEGRAM_BOT_TOKEN = "8044876827:AAHGWWTEqaVL79HLXnf_W-nJLwmtSYslaPs" 
+# Senin Yeni Gemini API Key'in:
+GEMINI_API_KEY = "AIzaSyCRiWLU8nA1yrQ1sDgMiU_m3qW334AtNTY" 
 
-# Loglama ayarları (Railway'de hata takibi için)
+# Loglama ayarları
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Yapay Zeka Ayarları
 try:
-    # Key'in doğru çalıştığını daha önce görmüştük.
+    if not GEMINI_API_KEY or not TELEGRAM_BOT_TOKEN:
+        logger.error("HATA: API Anahtarları eksik.")
+        exit() 
+
     gemini_client = genai.Client(api_key=GEMINI_API_KEY)
     model = 'gemini-2.5-flash'
+    
     # Sistem talimatı (Botun kimliği)
     system_instruction = (
         "Sen, insanlara İslam dini ve genel dini konularda yardımcı olan, "
@@ -30,7 +35,6 @@ try:
     )
 except Exception as e:
     logger.error(f"HATA: Yapay zeka servisi başlatılamadı. {e}")
-    # Eğer key hatalıysa programı durdur
     exit()
 
 # ----------- KOMUT İŞLEYİCİLERİ -----------
@@ -46,17 +50,18 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     user_message = update.message.text.lower()
     
-    # Basit Kimlik Sorgusu Kontrolü (Gemini'ye gitmeden cevap verir)
+    # Basit Kimlik Sorgusu Kontrolü
     identity_keywords = ["kimsin", "nesin", "adın ne", "bot musun"]
     if any(keyword in user_message for keyword in identity_keywords):
-        await update.message.reply_text('Ben **Şule Yapay Zekayım**. Amacım, dini konularda size yardımcı olmaktır.')
+        # Botun kimlik bilgisi
+        await update.message.reply_text('Ben **bir yapay zekayım**. Amacım, dini konularda size yardımcı olmaktır.')
         return
 
     # Yapay Zeka ile cevap verme
     try:
         response = gemini_client.models.generate_content(
             model=model,
-            contents=update.message.text, # Orijinal mesajı kullanıyoruz
+            contents=update.message.text, 
             config={"system_instruction": system_instruction}
         )
         
@@ -87,7 +92,6 @@ def main():
     print("--------------------------------------------------")
 
     # Botu, Railway'e uygun basit Polling ile başlat
-    # Bu metot, çökme hatası veren Webhook'un yerine kullanılır.
     application.run_polling(poll_interval=3)
 
 
