@@ -6,13 +6,14 @@ from google import genai
 from google.genai.errors import APIError 
 
 # ----------------------------------------------------------------------
-# 1. API ANAHTARLARI VE AYARLAR (Senin İsteğin Üzerine Kod İçine Yazılmıştır)
+# 1. API ANAHTARLARI VE AYARLAR
+# Yeni anahtarların doğrudan kod içine yazılmıştır.
 # ----------------------------------------------------------------------
 
 # Senin Telegram Bot Token'ın:
 TELEGRAM_BOT_TOKEN = "8044876827:AAHGWWTEqaVL79HLXnf_W-nJLwmtSYslaPs" 
-# Senin Yeni Gemini API Key'in:
-GEMINI_API_KEY = "AIzaSyCRiWLU8nA1yrQ1sDgMiU_m3qW334AtNTY" 
+# Senin YENİ ve EN GÜNCEL Gemini API Key'in:
+GEMINI_API_KEY = "AIzaSyB4RiDiY9yYpKyw-SnHYL5__vXArzM3dwU" 
 
 # Loglama ayarları
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
