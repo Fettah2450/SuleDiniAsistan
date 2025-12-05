@@ -7,13 +7,13 @@ from google.genai.errors import APIError
 
 # ----------------------------------------------------------------------
 # 1. API ANAHTARLARI VE AYARLAR
-# YENİ anahtarların doğrudan kod içine yazılmıştır.
+# GÜVENLİK İÇİN ANAHTARLAR ARTIK KODDAN ÇEKİLMEYECEK.
+# BUNUN YERİNE RAILWAY VARIABLES (ORTAM DEĞİŞKENLERİ) KULLANILACAK.
 # ----------------------------------------------------------------------
 
-# Senin Telegram Bot Token'ın:
-TELEGRAM_BOT_TOKEN = "8044876827:AAHGWWTEqaVL79HLXnf_W-nJLwmtSYslaPs" 
-# Senin YENİ ve EN GÜNCEL Gemini API Key'in:
-GEMINI_API_KEY = "AIzaSyBETPedgrXe_corr5MKXrXQJHHrGkb5RT0" 
+# Kod, anahtarları Railway'deki Variables sekmesinden otomatik çeker.
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN") 
+GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") 
 
 # Loglama ayarları
 logging.basicConfig(format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO)
@@ -22,7 +22,8 @@ logger = logging.getLogger(__name__)
 # Yapay Zeka Ayarları
 try:
     if not GEMINI_API_KEY or not TELEGRAM_BOT_TOKEN:
-        logger.error("HATA: API Anahtarları eksik.")
+        logger.error("HATA: API Anahtarları Railway Variables'da tanımlı değil.")
+        # Key yoksa programı başlatmayı reddet
         exit() 
 
     gemini_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -82,6 +83,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 def main():
     """Botu çalıştıran ana işlev"""
     
+    if not TELEGRAM_BOT_TOKEN:
+        logger.error("HATA: TELEGRAM_BOT_TOKEN ortam değişkeni tanımlı değil.")
+        exit()
+        
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
     # Handler'ları kaydet
